@@ -20,6 +20,15 @@ class MorletDamping(object):
     _root_finding = "close"
 
     def __init__(self, sig, fs, k, n1=10, n2=20):
+        """
+
+        :param sig: analysed signal
+        :param fs:  frequency of sampling
+        :param k: number of oscillations for the damping identification
+        :param n1: time-spread parameter
+        :param n2: time-spread parameter
+        :return:
+        """
         self.sig = sig
         self.fs = float(fs)
         self.k = float(k)
@@ -27,6 +36,10 @@ class MorletDamping(object):
         self.n2 = float(n2)
 
     def identify_damping(self, w):
+        """
+        Identify damping at circular frequency `w` (rad/s)
+
+        """
         M = np.abs(self.morlet_integrate(self.n1, w)) /\
             np.abs(self.morlet_integrate(self.n2, w))
         if self._root_finding == "close":
@@ -35,6 +48,7 @@ class MorletDamping(object):
                 self.n2 - self.n1 * self.n1)) *\
                 np.sqrt(np.log(np.sqrt(self.n1 / self.n2) * M))
         else:
+            # eq (19):
             eqn = lambda x: np.exp(4 * np.pi**2 * self.k**2\
                 * x**2 * (self.n2**2 -\
                 self.n1**2) / self.n1**2 / self.n2**2 ) *\
@@ -57,9 +71,16 @@ class MorletDamping(object):
         self.x0 = x0
 
     def morlet_integrate(self, n, w):
-        eta = 2 * np.sqrt(2) * np.pi * self.k / n
+        """
+        Perform the numerical integration with a Morlet wave at circular freq `w` and time-spread parameter `n`.
+
+        :param n: time-spread parameter
+        :param w: circular frequency (rad/s)
+        :return:
+        """
+        eta = 2 * np.sqrt(2) * np.pi * self.k / n # eq (14)
         s = eta / w
-        T = self.k * 2 * np.pi / w
+        T = self.k * 2 * np.pi / w # eq (12)
         if T > (self.sig.size / self.fs):
             raise ValueError("Signal is too short, %d points are needed" % np.round(T * self.fs))
         npoints = np.round(T * self.fs)
@@ -69,7 +90,7 @@ class MorletDamping(object):
         kernel = np.exp(-t * t / s / s / 2) *\
             np.exp(-1j * eta * t / s)
         kernel *= 1 / (np.pi ** 0.25 * np.sqrt(s))
-        return simps(self.sig[:npoints] * kernel, dx=1 / float(self.fs))
+        return simps(self.sig[:npoints] * kernel, dx=1 / float(self.fs)) # eq (15)
 
 if __name__ == "__main__":
     fs1 = 100
@@ -80,8 +101,8 @@ if __name__ == "__main__":
 
 #    Close form
     identifier = MorletDamping(sig1, fs1, k1, 10, 20)
-    print identifier.identify_damping(w1)
+    print(identifier.identify_damping(w1))
 #    Exact
     identifier = MorletDamping(sig1, fs1, k1, 5, 10)
     identifier.set_root_finding(newton, 0.1)
-    print identifier.identify_damping(w1)
+    print(identifier.identify_damping(w1))
