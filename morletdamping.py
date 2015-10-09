@@ -3,7 +3,9 @@
 This is a Python implementation of damping identification
 method using Morlet wave, based on [1]:
 
-[1] J. Slavič, M. Boltežar, Damping identification with the Morlet-wave, Mechanical Systems and Signal Processing. 25 (2011) 1632–1645. doi:10.1016/j.ymssp.2011.01.008.
+[1] J. Slavič, M. Boltežar, Damping identification with the Morlet-
+wave, Mechanical Systems and Signal Processing. 25 (2011) 1632–1645.
+doi:10.1016/j.ymssp.2011.01.008.
 
 Created on Thu Oct 08 15:58:13 2015
 
@@ -13,7 +15,7 @@ import numpy as np
 from scipy.integrate import simps, romb
 from scipy.optimize import newton
 from scipy.special import erf
-
+from __future__ import print_function
 
 class MorletDamping(object):
     _integration = simps
@@ -21,7 +23,6 @@ class MorletDamping(object):
 
     def __init__(self, sig, fs, k, n1=10, n2=20):
         """
-
         :param sig: analysed signal
         :param fs:  frequency of sampling
         :param k: number of oscillations for the damping identification
@@ -96,7 +97,7 @@ if __name__ == "__main__":
     fs1 = 100
     t1 = np.arange(0, 6, 1. / fs1)
     w1 = 2 * np.pi * 10
-    sig1 = np.cos(w1 * t1) * np.exp(- 0.07 * w1 * t1)
+    sig1 = np.cos(w1 * t1) * np.exp(-0.02 * w1 * t1)
     k1 = 40
 
 #    Close form
