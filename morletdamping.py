@@ -5,17 +5,19 @@ method using Morlet wave, based on [1]:
 
 [1] J. Slavič, M. Boltežar, Damping identification with the Morlet-
 wave, Mechanical Systems and Signal Processing. 25 (2011) 1632–1645.
-doi:10.1016/j.ymssp.2011.01.008.
+doi:10.1016/j.ymssp.2011.01.008. 
+
+Check http://lab.fs.uni-lj.si/ladisk/?what=abstract&ID=58 for more info.
 
 Created on Thu Oct 08 15:58:13 2015
 
 @author: WANG Longqi
 """
+from __future__ import print_function
 import numpy as np
 from scipy.integrate import simps, romb
 from scipy.optimize import newton
 from scipy.special import erf
-from __future__ import print_function
 
 class MorletDamping(object):
     _integration = simps
